@@ -3,41 +3,45 @@
 #include <string.h>
 #include <ctype.h>
 
+#define MAXLEN 100
+
 void changeCase(char *str, int len) {
 	for(int i = 0; i < len; ++i) {
 		str[i] = toupper(str[i]);
 	}
 }
 
-int main(int argc, char **argv) {
-	if (argc != 4) {
-		printf("Usage: encryption <original string> <encryption string><mode>\n");
-		printf("mode 0=encrypt, mode 1=decrypt\n");
-		return(1);
-	}
+int main(void) {
 	/* First argument will be string to be encrypted, second argument will be encryption template */
-	int len1 = strlen(argv[1]);
-	int len2 = strlen(argv[2]);
-	int mode = atoi(argv[3]);
+	/* Third argument will be encryption mode */
+	char str1[MAXLEN], str2[MAXLEN];
+	int mode;
+	fgets(str1, MAXLEN, stdin);
+	fgets(str2, MAXLEN, stdin);
+	scanf("%d", &mode);
+	int len1 = strlen(str1);
+	int len2 = strlen(str2);
+	--len1; --len2; // fgets adds a /n character to every string processed
 	/* preprocessing strings */
-	changeCase(argv[1], len1);
-	changeCase(argv[2], len2);
+	changeCase(str1, len1);
+	changeCase(str2, len2);
 	char encrypted[len1+1];
 	char diff;
 	if (mode) {
 		for (int i = 0; i < len1; ++i) {
-			diff = argv[1][i] - (argv[2][i%len2] - 'A');
+			diff = str1[i] - (str2[i%len2] - 'A');
 			diff = 'A' + (diff + 'A')%26;
 			encrypted[i] = diff;
 		}
 	}
 	else {
 		for (int i = 0; i < len1; ++i) {
-			diff = (argv[2][i%len2] - 'A') + argv[1][i];
+			diff = (str2[i%len2] - 'A') + str1[i];
 			diff = 'A' + (diff - 'A')%26;
 			encrypted[i] = diff;
 		}
 	}
 	encrypted[len1] = '\0';
 	printf("%s\n", encrypted);
+	return 0;
 }
