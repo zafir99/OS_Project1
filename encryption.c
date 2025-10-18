@@ -19,13 +19,15 @@ int main(void) {
 	fgets(str1, MAXLEN, stdin);
 	fgets(str2, MAXLEN, stdin);
 	scanf("%d", &mode);
+	/* eliminate newline character from strings, if it exists */
+	str1[strcspn(str1, "\n")] = '\0';
+	str2[strcspn(str2, "\n")] = '\0';
 	int len1 = strlen(str1);
 	int len2 = strlen(str2);
-	--len1; --len2; // fgets adds a /n character to every string processed
 	/* preprocessing strings */
 	changeCase(str1, len1);
 	changeCase(str2, len2);
-	char encrypted[len1+1];
+	char encrypted[len1+1]; // +1 to make room for null character
 	char diff;
 	if (mode) {
 		for (int i = 0; i < len1; ++i) {
