@@ -1,9 +1,13 @@
 #include <stdio.h>
+#include <unistd.h>
 #include <stdlib.h>
 #include <string.h>
 #include <ctype.h>
 
 #define MAXLEN 100
+#define NUMCOMMANDS 4
+
+char *commands[NUMCOMMANDS] = {"PASSKEY", "ENCRYPT", "DECRYPT", "QUIT"};
 
 void changeCase(char *str, int len) {
 	for(int i = 0; i < len; ++i) {
@@ -11,20 +15,100 @@ void changeCase(char *str, int len) {
 	}
 }
 
+static inline char checkCommand(char *str) {
+	char check = -1; // I didn't want to import bool.h so I'm just going to use a char instead
+	for (int i = 0; i < NUMCOMMANDS-1; ++i) {
+		if (!strcmp(str, commands[i])) {
+			check = i;
+		}
+	}
+	return check;
+}
+
+static inline char checkAlpha(char *str, int len) {
+	for (int i = 0; i < len; ++i) {
+		if (!isalpha(str[i])) {
+			return -1;
+		}
+	}
+	return 0;
+}
+
 int main(void) {
-	/* First argument will be string to be encrypted, second argument will be encryption template */
-	/* Third argument will be encryption mode */
-	char str1[MAXLEN], str2[MAXLEN];
-	int mode;
-	fgets(str1, MAXLEN, stdin);
-	fgets(str2, MAXLEN, stdin);
-	scanf("%d", &mode);
-	/* eliminate newline character from strings, if it exists */
-	str1[strcspn(str1, "\n")] = '\0';
-	str2[strcspn(str2, "\n")] = '\0';
-	int len1 = strlen(str1);
-	int len2 = strlen(str2);
+	char buf[MAXLEN+10]; // maximum string size 
+	char passkey[MAXLEN];
+	passkey[0] = '\0';
+	char quit = 0;
+
+	while (!quit) {
+		read(STDIN_FILENO, buf, MAXLEN+10);
+		buf[strcspn(buf, "\n")] = '\0';
+		char *command = strtok(buf, " ");
+		changeCase(command, strlen(command));
+
+		char check = checkCommand(command);
+
+		if (check == -1) {
+			printf("ERROR %s is an unrecognized command.\n", command);
+			printf("Options are: \n\tPASSKEY\n\tENCRYPT\n\tDECRYPT\n\tQUIT\n\n");
+			continue;
+		}
+
+		char *result = strtok(NULL, "");
+		if (result == NULL) {
+			printf("Missing argument.\n");
+			continue;
+		}
+
+		if (check && strlen(passkey) == 0) {
+			printf("ERROR Passkey not set.\n");
+			continue;
+		}
+
+		int len1 = strlen(result);
+		int len2 = strlen(passkey);
+
+		if (checkAlpha(result, len1) == -1) {
+			printf("ERROR %s is an invalid argument.\n", result);
+			continue;
+		}
+		
+		changeCase(result, strlen(result));
+		switch (check) {
+			case 0 : // SET PASSKEY
+				strcpy(passkey, result);
+				result = "";
+				break;
+			
+			case 1 : // ENCRYPT
+				for (int i = 0; i < len1; ++i) {
+					char diff = result[i] + (passkey[i%len2] - 'A');
+					diff = 'A' + (diff - 'A')%26;
+					result[i] = diff;
+				}
+				break;
+
+			case 2 : // DECRYPT
+				for (int i = 0; i < len1; ++i) {
+					char diff = result[i] - (passkey[i%len2] - 'A');
+					diff = 'A' + (diff + 'A')%26;
+					result[i] = diff;
+				}
+				break;
+
+			case 3 : // QUIT
+				quit = 0;
+				break;
+		}
+		if (!quit) {
+			printf("RESULT %s\n", result);
+		}
+	}
+	return 0;
+}
+
 	/* preprocessing strings */
+	/*
 	changeCase(str1, len1);
 	changeCase(str2, len2);
 	char encrypted[len1+1]; // +1 to make room for null character
@@ -45,5 +129,4 @@ int main(void) {
 	}
 	encrypted[len1] = '\0';
 	printf("%s\n", encrypted);
-	return 0;
-}
+	*/
