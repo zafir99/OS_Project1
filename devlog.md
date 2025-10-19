@@ -30,3 +30,8 @@ now, I will rewrite it to use a single buffer and strtok.
 19-October-2025 12:32AM
 I finished the revised cypher. It works properly with decent error handling. Now all that is left is the driver
 program. I plan on working on the error handling first, and then moving on to the critical logic.
+
+19-October-2025 1:49AM
+I quickly switched back to my logging development branch because I realized the logger was supposed to accept
+the filename as a command line argument and not through stdin. It was fairly trivial to implement, and I just
+merged back the results with my main branch.
