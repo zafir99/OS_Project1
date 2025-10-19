@@ -26,3 +26,7 @@ appears to working correctly.
 Unfortunately, I just realized that even my current stdin version of the encryption program is still incorrect. I
 just checked the project doc and realized that it's supposed to be a one line string input separated by a space, so
 now, I will rewrite it to use a single buffer and strtok.
+
+19-October-2025 12:32AM
+I finished the revised cypher. It works properly with decent error handling. Now all that is left is the driver
+program. I plan on working on the error handling first, and then moving on to the critical logic.
