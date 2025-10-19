@@ -18,3 +18,11 @@ that prints the menu, a while loop that forks into a child process for encryptio
 a child process outside the loop that consists of the logger. I'm not entirely sure if that's how it'll all work 
 properly, but that is the current outline. Ideally, I will at least have a rough draft of the entire application by
 the end of this session.
+
+18-October-2025 7:00PM
+I was able to finish my logger; I came across troubles with the mixing of scanf and fgets. I had to use getchar
+to get rid of the extra newline character that remains in the buffer from scanf, but after all that, the logger
+appears to working correctly.
+Unfortunately, I just realized that even my current stdin version of the encryption program is still incorrect. I
+just checked the project doc and realized that it's supposed to be a one line string input separated by a space, so
+now, I will rewrite it to use a single buffer and strtok.
