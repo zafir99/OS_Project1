@@ -203,8 +203,8 @@ int main(int argc, char **argv) {
 			continue;
 		}
 
-		write(logfd[1], &commandSelection, 1);
-		write(logfd[1], "\n", 1);
+		write(logfd[0][1], &commandSelection, 1);
+		write(logfd[0][1], "\n", 1);
 		switch (commandSelection) {
 			case 0 :
 				while (historyOption != '1' || historyOption != '2') {
@@ -244,7 +244,7 @@ int main(int argc, char **argv) {
 		}
 	}
 
-	close(encryptfd[0]); close(encryptfd[1]);
-	close(logfd[0]); close(logfd[1]);
+	close(encryptfd[0][0]); close(encryptfd[1][1]);
+	close(logfd[0][0]); close(logfd[1][1]);
 	return unlink(temp_file); // delete temp history file using linux syscall
 }
