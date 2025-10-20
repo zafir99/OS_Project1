@@ -15,6 +15,11 @@ static inline void formatString(char *buf) {
 }
 
 int main(int argc, char **argv) {
+	if (argc == 1) {
+		printf("usage: ./logger <file_name>\n");
+		return 1;
+	}
+
 	char *action[NUMACTIONS] = {"START", "PASS", "ENCRYPT", "DECRYPT", "HISTORY", "QUIT"};
 	char timebuf[time_char];
 	char buf[MAXLEN];

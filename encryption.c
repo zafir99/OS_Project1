@@ -17,7 +17,7 @@ void changeCase(char *str, int len) {
 
 static inline char checkCommand(char *str) {
 	char check = -1; // I didn't want to import bool.h so I'm just going to use a char instead
-	for (int i = 0; i < NUMCOMMANDS-1; ++i) {
+	for (int i = 0; i < NUMCOMMANDS; ++i) {
 		if (!strcmp(str, commands[i])) {
 			check = i;
 		}
@@ -40,13 +40,18 @@ int main(void) {
 	passkey[0] = '\0';
 	char quit = 0;
 
-	while (!quit) {
+	char c;
+	while (true) {
 		read(STDIN_FILENO, buf, MAXLEN+10);
 		buf[strcspn(buf, "\n")] = '\0';
 		char *command = strtok(buf, " ");
 		changeCase(command, strlen(command));
 
 		char check = checkCommand(command);
+
+		if (check == 3) {
+			break;
+		}
 
 		if (check == -1) {
 			printf("ERROR %s is an unrecognized command.\n", command);
@@ -95,38 +100,9 @@ int main(void) {
 					result[i] = diff;
 				}
 				break;
+		}
 
-			case 3 : // QUIT
-				quit = 0;
-				break;
-		}
-		if (!quit) {
-			printf("RESULT %s\n", result);
-		}
+		printf("RESULT %s\n", result);
 	}
 	return 0;
 }
-
-	/* preprocessing strings */
-	/*
-	changeCase(str1, len1);
-	changeCase(str2, len2);
-	char encrypted[len1+1]; // +1 to make room for null character
-	char diff;
-	if (mode) {
-		for (int i = 0; i < len1; ++i) {
-			diff = str1[i] - (str2[i%len2] - 'A');
-			diff = 'A' + (diff + 'A')%26;
-			encrypted[i] = diff;
-		}
-	}
-	else {
-		for (int i = 0; i < len1; ++i) {
-			diff = (str2[i%len2] - 'A') + str1[i];
-			diff = 'A' + (diff - 'A')%26;
-			encrypted[i] = diff;
-		}
-	}
-	encrypted[len1] = '\0';
-	printf("%s\n", encrypted);
-	*/

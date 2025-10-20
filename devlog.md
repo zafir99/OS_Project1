@@ -35,3 +35,15 @@ program. I plan on working on the error handling first, and then moving on to th
 I quickly switched back to my logging development branch because I realized the logger was supposed to accept
 the filename as a command line argument and not through stdin. It was fairly trivial to implement, and I just
 merged back the results with my main branch.
+
+19-October-2025 9:40PM
+I've been working on this all day. There is something not quite going right with the read and write functions
+while mixing with pipe and dup. For whatever reason, the output of the child program doesn't seem to be redirecting
+correctly to the parent program with the write end of the pipe. Similarly with the read end of the pipe, the child
+program is always reading twice from only one line of input. I'll try to update this if I can finish before 12AM.
+UPDATE at 10:40PM: I needed two pipes to communicate both ways. Oh my goodness.
+
+20-October-2025 1:28AM
+I give up. Not even the professor's cpp process example works properly on my machine. I have no idea what's going
+on. I know that my logger and encryption program work properly. My driver program is incomplete. I apologize in
+advance for asking this, but I ask that you grade this generously. Thank you.
