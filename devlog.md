@@ -47,3 +47,11 @@ UPDATE at 10:40PM: I needed two pipes to communicate both ways. Oh my goodness.
 I give up. Not even the professor's cpp process example works properly on my machine. I have no idea what's going
 on. I know that my logger and encryption program work properly. My driver program is incomplete. I apologize in
 advance for asking this, but I ask that you grade this generously. Thank you.
+
+21-October-2025 11:23PM
+I worked on this like a dog for almost two days straight and I finally figured everything out. First and foremost,
+do NOT, EVER, mix standard library functions with linux syscalls. Secondly, I was genuinely forced to use the linux
+syscalls for almost every form of I/O handling, except for the logger which could get away with doing dprintf to
+the logging file, which makes sense considering there's no demand for it to send its file data to any other program.
+Thirdly, I truly had no idea how much work went into handling user input. Goodness gracious. There's so much work
+that needs to be done if you want to manually parse and sanitize human input to a computer. 
