@@ -7,10 +7,10 @@
 
 #define MAXLEN 100
 #define time_char 17
-#define NUMACTIONS 6
+#define NUMACTIONS 7
 
 static inline void formatString(char *buf) {
-	fgets(buf, MAXLEN, stdin);
+	read(STDIN_FILENO, buf, MAXLEN);
 	buf[strcspn(buf, "\n")] = '\0';
 }
 
@@ -20,7 +20,7 @@ int main(int argc, char **argv) {
 		return 1;
 	}
 
-	char *action[NUMACTIONS] = {"START", "PASS", "ENCRYPT", "DECRYPT", "HISTORY", "QUIT"};
+	char *action[NUMACTIONS] = {"START", "PASS", "ENCRYPT", "DECRYPT", "HISTORY", "EXIT HISTORY", "QUIT"};
 	char timebuf[time_char];
 	char buf[MAXLEN];
 
@@ -36,25 +36,31 @@ int main(int argc, char **argv) {
 	dprintf(fd, "%s [%s] Logging Started.\n\n", timebuf, action[0]);
 
 	int action_type;
-	scanf("%d", &action_type);
-	while (action_type != -1) {
-		getchar(); // consume newline character from scanf
+	while (1) {
+		read(STDIN_FILENO, &action_type, sizeof(int));
+	//	scanf("%d", &action_type);
+		if (action_type == -1) {
+			break;
+		}
 		now = time(NULL);
 		strftime(timebuf, time_char, "%Y-%m-%d %H:%M", localtime(&now));
 		switch (action_type) {
 			case 1 :
-				dprintf(fd, "%s [%s] Passkey set by user.\n\n", timebuf, action[action_type]);
+				formatString(buf);
+				dprintf(fd, "%s [%s] Passkey set by user as \"%s\".\n\n", timebuf, action[action_type], buf);
 				break;
 			
 			case 2 :
 				formatString(buf);
-				dprintf(fd, "%s [%s] String encrypted to ", timebuf, action[action_type]);
+				dprintf(fd, "%s [%s] String \"%s\" encrypted to ", timebuf, action[action_type], buf);
+				formatString(buf);
 				dprintf(fd, "\"%s\".\n\n", buf);
 				break;
 
 			case 3 :
 				formatString(buf);
-				dprintf(fd, "%s [%s] String decrypted to ", timebuf, action[action_type]);
+				dprintf(fd, "%s [%s] String \"%s\" decrypted to ", timebuf, action[action_type], buf);
+				formatString(buf);
 				dprintf(fd, "\"%s\".\n\n", buf);
 				break;
 
@@ -62,16 +68,27 @@ int main(int argc, char **argv) {
 				dprintf(fd, "%s [%s] History shown to user.\n\n", timebuf, action[action_type]);
 				break;
 
+			case 5 :
+				dprintf(fd, "%s [%s] User exited history.\n\n", timebuf, action[action_type]);
+				break;
+
+			case 6 :
+				dprintf(fd, "%s [%s] User attempted encryption with no passkey.\n\n", timebuf, action[2]);
+				break;
+
+			case 7 :
+				dprintf(fd, "%s [%s] User attempted decryption with no passkey.\n\n", timebuf, action[3]);
+				break;
+
 			default :
-				dprintf(fd, "%s [Unknown Command] Invalid command entered.\n\n", timebuf);
+				dprintf(fd, "%s [UNKNOWN] Invalid command entered.\n\n", timebuf);
 				break;
 		}
-		scanf("%d", &action_type);
 	}
 	
 	now = time(NULL);
 	strftime(timebuf, time_char, "%Y-%m-%d %H:%M", localtime(&now));
-	dprintf(fd, "%s [%s] Logging Ended.\n\n", timebuf, action[5]);
+	dprintf(fd, "%s [%s] Logging Ended.\n\n", timebuf, action[6]);
 	close(fd);
 	return 0;
 }
